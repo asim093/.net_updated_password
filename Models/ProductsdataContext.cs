@@ -23,6 +23,8 @@ public partial class ProductsdataContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserAuth> UserAuths { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("data source=.;initial catalog=Productsdata;user id=sa;password=aptech; TrustServerCertificate=True");
@@ -79,6 +81,24 @@ public partial class ProductsdataContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(100)
                 .IsUnicode(false)
+                .HasColumnName("username");
+        });
+
+        modelBuilder.Entity<UserAuth>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__UserAuth__3214EC07078D2837");
+
+            entity.ToTable("UserAuth");
+
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.Roleid)
+                .HasDefaultValueSql("((2))")
+                .HasColumnName("roleid");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.Username)
+                .HasMaxLength(50)
                 .HasColumnName("username");
         });
 

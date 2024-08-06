@@ -3,11 +3,58 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using landingpage.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace landingpage.Controllers
 {
     public class AuthController : Controller
     {
+        private readonly ProductsdataContext db;
+
+        public AuthController(ProductsdataContext _db)
+        {
+            db = _db;
+        }
+
+        public IActionResult Signup()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Signup(User user)
+        {
+         
+            var existingUser = db.Users.FirstOrDefault(a => a.Email == user.Email);
+
+            if (existingUser == null)
+            {
+              
+                var hasher = new PasswordHasher<string>();
+                string hashedPassword = hasher.HashPassword(user.Email, user.Password);
+
+                
+                user.Password = hashedPassword;
+
+                
+                db.Users.Add(user);
+                db.SaveChanges();
+
+               
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                
+                ViewBag.Msg = "User already registered. Please login.";
+
+               
+                return View();
+            }
+        }
+
+
         public IActionResult Login()
         {
             return View();
